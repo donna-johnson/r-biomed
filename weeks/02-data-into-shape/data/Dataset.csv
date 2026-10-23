@@ -1,0 +1,6 @@
+Patient_ID,Age,Sex,CRP_mg.L,WBC_Count_10^9.L,COVID_Result,FollowUp_Required
+P001,45,M,12.5,8.4,Positive,Yes
+P002,38,F,8.1,7.2,positive,Y
+P003,52,male,NA,6.9,NEG,No
+P004,29,Female,5.3,NA,"""negative""",n
+P005,NA,M,High,10.2,Pos,T

@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB" xml:lang="en-GB"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.19">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Week 2, session 1: Tidy data and wrangling – R for Biomedical Science</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../weeks/02-data-into-shape/prep-2.html" rel="next">
+<link href="../../weeks/02-data-into-shape/guide-1.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-a1f79b07cc658047d019327afef43822.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../weeks/02-data-into-shape/index.html">Week 2 · Getting data into shape</a></li><li class="breadcrumb-item"><a href="../../weeks/02-data-into-shape/workbook-1.html">Session 1 · Workbook</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../../">R for Biomedical Science</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Week 1 · Getting started</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../weeks/01-getting-started/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../weeks/01-getting-started/prep-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 1 · Before the session</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../weeks/01-getting-started/guide-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 1 · Guide</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../weeks/01-getting-started/workbook-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 1 · Workbook</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../weeks/01-getting-started/prep-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 2 · Before the session</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../weeks/01-getting-started/guide-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 2 · Guide</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../weeks/01-getting-started/workbook-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 2 · Workbook</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Week 2 · Getting data into shape</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../weeks/02-data-into-shape/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../weeks/02-data-into-shape/prep-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 1 · Before the session</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../weeks/02-data-into-shape/guide-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 1 · Guide</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../weeks/02-data-into-shape/workbook-1.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Session 1 · Workbook</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../weeks/02-data-into-shape/prep-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 2 · Before the session</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../weeks/02-data-into-shape/guide-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 2 · Guide</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../weeks/02-data-into-shape/workbook-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 2 · Workbook</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reference/startup-troubleshooting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Guide to R 00: Start-up and troubleshooting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#this-is-the-reference-copy-of-the-workbook" id="toc-this-is-the-reference-copy-of-the-workbook" class="nav-link active" data-scroll-target="#this-is-the-reference-copy-of-the-workbook">This is the reference copy of the workbook</a></li>
+  <li><a href="#before-you-start" id="toc-before-you-start" class="nav-link" data-scroll-target="#before-you-start">Before you start</a></li>
+  <li><a href="#activity-1-load-the-data-and-take-a-first-look" id="toc-activity-1-load-the-data-and-take-a-first-look" class="nav-link" data-scroll-target="#activity-1-load-the-data-and-take-a-first-look">Activity 1: Load the data and take a first look</a></li>
+  <li><a href="#activity-2-tidy-the-column-names" id="toc-activity-2-tidy-the-column-names" class="nav-link" data-scroll-target="#activity-2-tidy-the-column-names">Activity 2: Tidy the column names</a></li>
+  <li><a href="#activity-3-recode-the-categories-and-fix-age" id="toc-activity-3-recode-the-categories-and-fix-age" class="nav-link" data-scroll-target="#activity-3-recode-the-categories-and-fix-age">Activity 3: Recode the categories and fix age</a></li>
+  <li><a href="#activity-4-missing-value-codes" id="toc-activity-4-missing-value-codes" class="nav-link" data-scroll-target="#activity-4-missing-value-codes">Activity 4: Missing-value codes</a></li>
+  <li><a href="#activity-5-from-wide-to-long" id="toc-activity-5-from-wide-to-long" class="nav-link" data-scroll-target="#activity-5-from-wide-to-long">Activity 5: From wide to long</a></li>
+  <li><a href="#activity-6-mean-hba1c-over-time-in-each-group" id="toc-activity-6-mean-hba1c-over-time-in-each-group" class="nav-link" data-scroll-target="#activity-6-mean-hba1c-over-time-in-each-group">Activity 6: Mean HbA1c over time in each group</a></li>
+  <li><a href="#activity-7-plot-the-trajectories" id="toc-activity-7-plot-the-trajectories" class="nav-link" data-scroll-target="#activity-7-plot-the-trajectories">Activity 7: Plot the trajectories</a></li>
+  <li><a href="#activity-8-your-turn-weight" id="toc-activity-8-your-turn-weight" class="nav-link" data-scroll-target="#activity-8-your-turn-weight">Activity 8: Your turn: weight</a></li>
+  <li><a href="#activity-9-save-the-clean-data-and-render" id="toc-activity-9-save-the-clean-data-and-render" class="nav-link" data-scroll-target="#activity-9-save-the-clean-data-and-render">Activity 9: Save the clean data, and render</a></li>
+  <li><a href="#activity-10-optional-on-your-own" id="toc-activity-10-optional-on-your-own" class="nav-link" data-scroll-target="#activity-10-optional-on-your-own">Activity 10 (optional): On your own</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="workbook-1.docx"><i class="bi bi-file-word"></i>MS Word</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../weeks/02-data-into-shape/index.html">Week 2 · Getting data into shape</a></li><li class="breadcrumb-item"><a href="../../weeks/02-data-into-shape/workbook-1.html">Session 1 · Workbook</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Week 2, session 1: Tidy data and wrangling</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="this-is-the-reference-copy-of-the-workbook" class="level2 callout-important">
+<h2 class="anchored" data-anchor-id="this-is-the-reference-copy-of-the-workbook">This is the reference copy of the workbook</h2>
+<p>This page is for reading only: you can’t run code or save answers here. To work through the activities, open <strong><code>week-02-session-1-workbook.qmd</code></strong> in RStudio. It’s in the <a href="week-02-student-pack.zip">student pack</a> you downloaded from the <a href="../../weeks/02-data-into-shape/index.html">week page</a>.</p>
+</section>
+<section id="before-you-start" class="level2">
+<h2 class="anchored" data-anchor-id="before-you-start">Before you start</h2>
+<p>In this session you’ll prepare a dataset from a six-month trial in 240 adults with type 2 diabetes. Each patient was in one of two groups: <strong>usual care</strong> (UC) or an <strong>intensive lifestyle programme</strong> (ILP). Their HbA1c, a measure of average blood glucose over the previous two to three months, and their weight were recorded at baseline, 3 months and 6 months. The data are simulated, but the problems in them are all ones you will meet in real datasets: the file was put together by several people, and it shows.</p>
+<p>Work through the activities in order, running each chunk and writing your answers under the <strong><em>Your answer:</em></strong> prompts. Keep the <strong>Guide to R 03</strong> open alongside; every function you need is explained there.</p>
+<p><strong>First</strong>, make sure this workbook and the week 2 data files are in your <code>R_module</code> project (the week 2 page explains how), and that the project is open: its name should appear at the top right of RStudio.</p>
+<p><strong>Second</strong>, install the one new package this session uses, <strong>janitor</strong>, by typing this in the <strong>Console</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"janitor"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Then run the chunk below to load the packages.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.1     ✔ readr     2.2.0
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.3     ✔ tibble    3.3.1
+✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+✔ purrr     1.2.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'janitor'
+
+The following objects are masked from 'package:stats':
+
+    chisq.test, fisher.test</code></pre>
+</div>
+</div>
+</section>
+<section id="activity-1-load-the-data-and-take-a-first-look" class="level2">
+<h2 class="anchored" data-anchor-id="activity-1-load-the-data-and-take-a-first-look">Activity 1: Load the data and take a first look</h2>
+<p>Run the chunk below. It imports the data, keeps it under a name that says it is untouched, and shows its size and structure.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dia_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/bootcamp_messy_diabetes.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 240 Columns: 12
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (5): Patient.ID, grp, SEX, Age, smoker_YN
+dbl (7): BL_HbA1c, HbA1c.3.months, hba1c_6M, weight_kg.bl, Weight3m, Wt_6.mo...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(dia_raw)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 240  12</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(dia_raw)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 240
+Columns: 12
+$ Patient.ID      &lt;chr&gt; "PT001", "PT002", "PT003", "PT004", "PT005", "PT006", …
+$ grp             &lt;chr&gt; "UC", "ILP", "UC", "ILP", "UC", "UC", "UC", "ILP", "UC…
+$ SEX             &lt;chr&gt; "F", "F", "F", "male", "F", "F", "F", "F", "M", "M", "…
+$ Age             &lt;chr&gt; "59", "54", "75", "55", "49", "53", "67", "63", "38", …
+$ BL_HbA1c        &lt;dbl&gt; 7.5, 8.5, 8.4, 8.9, 8.8, 8.9, 7.7, 8.2, 8.0, 8.3, -99.…
+$ HbA1c.3.months  &lt;dbl&gt; 7.0, 7.2, 8.0, 7.7, 8.0, 8.5, 7.2, 7.2, 7.2, 8.2, 8.0,…
+$ hba1c_6M        &lt;dbl&gt; 7.3, 7.0, 7.3, 7.4, 7.7, 8.5, 6.7, 6.9, 6.6, 8.1, 7.3,…
+$ weight_kg.bl    &lt;dbl&gt; 80.9, 77.5, 91.8, 124.6, 86.3, 91.6, 68.9, 106.3, 53.7…
+$ Weight3m        &lt;dbl&gt; 81.0, 72.9, 93.0, 122.6, 87.3, 92.2, 69.8, 106.9, 51.3…
+$ Wt_6.month      &lt;dbl&gt; 80.2, 70.2, 93.7, 120.9, 88.8, 93.5, 66.2, 102.4, 49.6…
+$ smoker_YN       &lt;chr&gt; "N", "N", "N", "N", "N", "0", "N", "1", "Yes", "N", "N…
+$ missed_visit_6m &lt;dbl&gt; 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</code></pre>
+</div>
+</div>
+<p><strong>1.1</strong> How many rows and columns are there, and what does one row represent?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>1.2</strong> Which columns has R read as text (<code>chr</code>) and which as numbers (<code>dbl</code>)? One of the text columns ought to be numeric. Which one, and what in its values explains why R read it as text?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p>Now run the chunk below, which counts every distinct value in three of the categorical columns.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>dia_raw <span class="sc">|&gt;</span> <span class="fu">count</span>(grp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  grp       n
+  &lt;chr&gt; &lt;int&gt;
+1 ILP     116
+2 UC      124</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>dia_raw <span class="sc">|&gt;</span> <span class="fu">count</span>(SEX)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 2
+  SEX        n
+  &lt;chr&gt;  &lt;int&gt;
+1 F         82
+2 M         83
+3 female    42
+4 male      33</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>dia_raw <span class="sc">|&gt;</span> <span class="fu">count</span>(smoker_YN)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+  smoker_YN     n
+  &lt;chr&gt;     &lt;int&gt;
+1 0            31
+2 1            27
+3 N           104
+4 No           23
+5 Y            31
+6 Yes          24</code></pre>
+</div>
+</div>
+<p><strong>1.3</strong> How many different ways have sex and smoking status each been recorded? Is <code>grp</code> recorded consistently?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>1.4</strong> List three things about this dataset that would need fixing before any analysis. (Look at the column names, too.)</p>
+<p><strong><em>Your answer:</em></strong></p>
+</section>
+<section id="activity-2-tidy-the-column-names" class="level2">
+<h2 class="anchored" data-anchor-id="activity-2-tidy-the-column-names">Activity 2: Tidy the column names</h2>
+<p><strong>2.1</strong> Run the chunk below. Compare the new names with those in Activity 1 and give two examples of how they have changed. In general terms, what has <code>clean_names()</code> done?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>dia <span class="ot">&lt;-</span> dia_raw <span class="sc">|&gt;</span> <span class="fu">clean_names</span>()</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(dia)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "patient_id"      "grp"             "sex"             "age"            
+ [5] "bl_hb_a1c"       "hb_a1c_3_months" "hba1c_6m"        "weight_kg_bl"   
+ [9] "weight3m"        "wt_6_month"      "smoker_yn"       "missed_visit_6m"</code></pre>
+</div>
+</div>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>2.2</strong> <code>clean_names()</code> has made the names consistent in <em>style</em>, but not in <em>meaning</em>. Look at the names of the three HbA1c columns and the three weight columns. What is still inconsistent?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>2.3</strong> The chunk below renames the measurement columns so that they all follow one pattern. Run it. In <code>rename()</code>, which name goes on the left of the <code>=</code>, the new one or the old one? Why might a pattern like <code>hba1c_0m</code>, <code>hba1c_3m</code>, <code>hba1c_6m</code> be more useful than the names you started with?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>dia <span class="ot">&lt;-</span> dia <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">hba1c_0m =</span> bl_hb_a1c,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">hba1c_3m =</span> hb_a1c_3_months,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">weight_0m =</span> weight_kg_bl,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">weight_3m =</span> weight3m,</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">weight_6m =</span> wt_6_month</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(dia)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "patient_id"      "grp"             "sex"             "age"            
+ [5] "hba1c_0m"        "hba1c_3m"        "hba1c_6m"        "weight_0m"      
+ [9] "weight_3m"       "weight_6m"       "smoker_yn"       "missed_visit_6m"</code></pre>
+</div>
+</div>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>2.4</strong> Check whether any patient appears in the data more than once. Write code in the chunk below that counts the rows for each <code>patient_id</code> and keeps only the IDs with more than one row (the guide shows how).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Your code here</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong><em>Your answer:</em></strong></p>
+</section>
+<section id="activity-3-recode-the-categories-and-fix-age" class="level2">
+<h2 class="anchored" data-anchor-id="activity-3-recode-the-categories-and-fix-age">Activity 3: Recode the categories and fix age</h2>
+<p>Run the chunk below. It makes three changes to the data and then shows four checks.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>dia <span class="ot">&lt;-</span> dia <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">group =</span> <span class="fu">factor</span>(grp,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"UC"</span>, <span class="st">"ILP"</span>),</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Usual care"</span>, <span class="st">"Intensive lifestyle"</span>)),</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sex =</span> <span class="fu">case_when</span>(</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>      sex <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"F"</span>, <span class="st">"female"</span>) <span class="sc">~</span> <span class="st">"Female"</span>,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>      sex <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"M"</span>, <span class="st">"male"</span>) <span class="sc">~</span> <span class="st">"Male"</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">sex =</span> <span class="fu">factor</span>(sex, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Female"</span>, <span class="st">"Male"</span>)),</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">age_yrs =</span> <span class="fu">parse_number</span>(age)</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>dia <span class="sc">|&gt;</span> <span class="fu">count</span>(grp, group)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  grp   group                   n
+  &lt;chr&gt; &lt;fct&gt;               &lt;int&gt;
+1 ILP   Intensive lifestyle   116
+2 UC    Usual care            124</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>dia <span class="sc">|&gt;</span> <span class="fu">count</span>(sex)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  sex        n
+  &lt;fct&gt;  &lt;int&gt;
+1 Female   124
+2 Male     116</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>dia <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">str_detect</span>(age, <span class="st">"yrs"</span>)) <span class="sc">|&gt;</span> <span class="fu">select</span>(patient_id, age, age_yrs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 3
+   patient_id age    age_yrs
+   &lt;chr&gt;      &lt;chr&gt;    &lt;dbl&gt;
+ 1 PT012      63 yrs      63
+ 2 PT020      72 yrs      72
+ 3 PT025      55 yrs      55
+ 4 PT067      59 yrs      59
+ 5 PT069      42 yrs      42
+ 6 PT084      38 yrs      38
+ 7 PT088      33 yrs      33
+ 8 PT101      85 yrs      85
+ 9 PT110      40 yrs      40
+10 PT112      64 yrs      64
+11 PT115      54 yrs      54
+12 PT121      73 yrs      73
+13 PT144      58 yrs      58
+14 PT170      74 yrs      74
+15 PT181      52 yrs      52
+16 PT182      50 yrs      50
+17 PT184      63 yrs      63
+18 PT204      65 yrs      65
+19 PT214      64 yrs      64
+20 PT233      54 yrs      54</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dia<span class="sc">$</span>age_yrs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  29.00   50.00   58.00   57.88   64.00   85.00 </code></pre>
+</div>
+</div>
+<p><strong>3.1</strong> In your own words, explain what each of the three changes does: the line starting <code>group =</code>, the two lines starting <code>sex =</code>, and the line starting <code>age_yrs =</code>.</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>3.2</strong> What does <code>%in%</code> do in <code>sex %in% c("F", "female")</code>? Use the counts from Activity 1 to check that the new <code>sex</code> column has the right number of females and males. What would have happened to a value such as “f”, which isn’t in either list?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>3.3</strong> The third check uses <code>str_detect()</code> to show only the patients whose original <code>age</code> contained “yrs”. What has <code>parse_number()</code> done to these values? What is the age range of the patients in the trial?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>3.4</strong> Now it’s your turn. In the chunk below, write code that creates a new column <code>smoker</code>, containing only “Yes” and “No”, from <code>smoker_yn</code>. Make it a factor with “No” as the first level, and check your result with <code>count()</code>. How many smokers and non-smokers are there? Did any values become <code>NA</code>?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Your code here</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong><em>Your answer:</em></strong></p>
+</section>
+<section id="activity-4-missing-value-codes" class="level2">
+<h2 class="anchored" data-anchor-id="activity-4-missing-value-codes">Activity 4: Missing-value codes</h2>
+<p>Run the chunk below. <code>starts_with()</code> picks out every column whose name starts with the given text, so this summarises all six measurement columns at once.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>dia <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"hba1c"</span>), <span class="fu">starts_with</span>(<span class="st">"weight"</span>)) <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    hba1c_0m          hba1c_3m          hba1c_6m         weight_0m     
+ Min.   :-99.000   Min.   :  5.400   Min.   :-99.000   Min.   : 52.00  
+ 1st Qu.:  7.700   1st Qu.:  7.075   1st Qu.:  6.300   1st Qu.: 81.05  
+ Median :  8.300   Median :  7.700   Median :  7.200   Median : 90.40  
+ Mean   :  4.781   Mean   : 40.716   Mean   :  3.242   Mean   : 89.68  
+ 3rd Qu.:  8.900   3rd Qu.:  8.400   3rd Qu.:  8.000   3rd Qu.: 97.15  
+ Max.   : 11.100   Max.   :999.000   Max.   : 10.400   Max.   :124.60  
+   weight_3m        weight_6m     
+ Min.   : 51.30   Min.   : 49.60  
+ 1st Qu.: 79.20   1st Qu.: 77.85  
+ Median : 89.35   Median : 87.70  
+ Mean   : 88.23   Mean   : 87.10  
+ 3rd Qu.: 96.83   3rd Qu.: 95.20  
+ Max.   :122.60   Max.   :120.90  </code></pre>
+</div>
+</div>
+<p><strong>4.1</strong> HbA1c is recorded here as a percentage. (UK laboratories now usually report it in mmol/mol; 6.5% is 48 mmol/mol.) Real results for people with diabetes rarely fall outside about 4 to 15%. Look at the minimum and maximum of each HbA1c column. Which values cannot be real results? Do the weight columns look plausible?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p>The trial’s data manager confirms that <strong>-99 and 999 were used to mean “result missing”</strong>. Run the chunk below to see what happens to the mean HbA1c at baseline and at 3 months if the codes are left in.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(dia<span class="sc">$</span>hba1c_0m)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4.78125</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(dia<span class="sc">$</span>hba1c_3m)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 40.71625</code></pre>
+</div>
+</div>
+<p><strong>4.2</strong> Compare these means with the medians from the <code>summary()</code> above. Why are they so far out, and why in opposite directions?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p>The chunk below replaces the codes with <code>NA</code> in all three HbA1c columns, then repeats the summary. Run it.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>dia <span class="ot">&lt;-</span> dia <span class="sc">|&gt;</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">hba1c_0m =</span> <span class="fu">if_else</span>(hba1c_0m <span class="sc">%in%</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">99</span>, <span class="dv">999</span>), <span class="cn">NA</span>, hba1c_0m),</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">hba1c_3m =</span> <span class="fu">if_else</span>(hba1c_3m <span class="sc">%in%</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">99</span>, <span class="dv">999</span>), <span class="cn">NA</span>, hba1c_3m),</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">hba1c_6m =</span> <span class="fu">if_else</span>(hba1c_6m <span class="sc">%in%</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">99</span>, <span class="dv">999</span>), <span class="cn">NA</span>, hba1c_6m)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>dia <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"hba1c"</span>)) <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    hba1c_0m        hba1c_3m         hba1c_6m     
+ Min.   : 6.20   Min.   : 5.400   Min.   : 4.300  
+ 1st Qu.: 7.80   1st Qu.: 7.000   1st Qu.: 6.400  
+ Median : 8.40   Median : 7.700   Median : 7.300  
+ Mean   : 8.36   Mean   : 7.672   Mean   : 7.226  
+ 3rd Qu.: 8.90   3rd Qu.: 8.225   3rd Qu.: 8.000  
+ Max.   :11.10   Max.   :10.400   Max.   :10.400  
+ NAs    :8       NAs    :8        NAs    :9       </code></pre>
+</div>
+</div>
+<p><strong>4.3</strong> How many missing values does each HbA1c column now have? Do the minimum and maximum values look plausible?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>4.4</strong> Why replace the codes with <code>NA</code>, rather than using <code>filter()</code> to remove the patients who have them?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>4.5</strong> <em>(Challenge.)</em> Judging by its name, <code>missed_visit_6m</code> records whether each patient missed their 6-month visit (1 = yes). Write code to find out how many of the patients who missed the visit have a 6-month HbA1c result anyway. What does your answer suggest, and what would you do about it?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Your code here</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong><em>Your answer:</em></strong></p>
+</section>
+<section id="activity-5-from-wide-to-long" class="level2">
+<h2 class="anchored" data-anchor-id="activity-5-from-wide-to-long">Activity 5: From wide to long</h2>
+<p>For a plot of HbA1c over time, R needs the timepoint in a column of its own. Run the chunk below, which reshapes the HbA1c data into long format.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>hba1c_long <span class="ot">&lt;-</span> dia <span class="sc">|&gt;</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(patient_id, group, sex, age_yrs, hba1c_0m, hba1c_3m, hba1c_6m) <span class="sc">|&gt;</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(hba1c_0m, hba1c_3m, hba1c_6m),</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"timepoint"</span>,</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"hba1c"</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">timepoint =</span> <span class="fu">factor</span>(timepoint,</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>                       <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"hba1c_0m"</span>, <span class="st">"hba1c_3m"</span>, <span class="st">"hba1c_6m"</span>),</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Baseline"</span>, <span class="st">"3 months"</span>, <span class="st">"6 months"</span>))</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>hba1c_long</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 720 × 6
+   patient_id group               sex    age_yrs timepoint hba1c
+   &lt;chr&gt;      &lt;fct&gt;               &lt;fct&gt;    &lt;dbl&gt; &lt;fct&gt;     &lt;dbl&gt;
+ 1 PT001      Usual care          Female      59 Baseline    7.5
+ 2 PT001      Usual care          Female      59 3 months    7  
+ 3 PT001      Usual care          Female      59 6 months    7.3
+ 4 PT002      Intensive lifestyle Female      54 Baseline    8.5
+ 5 PT002      Intensive lifestyle Female      54 3 months    7.2
+ 6 PT002      Intensive lifestyle Female      54 6 months    7  
+ 7 PT003      Usual care          Female      75 Baseline    8.4
+ 8 PT003      Usual care          Female      75 3 months    8  
+ 9 PT003      Usual care          Female      75 6 months    7.3
+10 PT004      Intensive lifestyle Male        55 Baseline    8.9
+# ℹ 710 more rows</code></pre>
+</div>
+</div>
+<p><strong>5.1</strong> How many rows does <code>hba1c_long</code> have, and why that number?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>5.2</strong> Describe what one row of <code>hba1c_long</code> represents. What happened to the columns that weren’t listed in <code>cols</code>?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>5.3</strong> The last step turns <code>timepoint</code> into a factor with its levels in a set order. What would go wrong in a plot or table if you just replaced the old names with the labels “Baseline”, “3 months” and “6 months” as plain text?</p>
+<p><strong><em>Your answer:</em></strong></p>
+</section>
+<section id="activity-6-mean-hba1c-over-time-in-each-group" class="level2">
+<h2 class="anchored" data-anchor-id="activity-6-mean-hba1c-over-time-in-each-group">Activity 6: Mean HbA1c over time in each group</h2>
+<p>Run the chunk below. It calculates, for each group at each timepoint, the number of patients with a result, and the mean and standard deviation of HbA1c.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>hba1c_summary <span class="ot">&lt;-</span> hba1c_long <span class="sc">|&gt;</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(group, timepoint) <span class="sc">|&gt;</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(hba1c)),</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_hba1c =</span> <span class="fu">mean</span>(hba1c, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_hba1c =</span> <span class="fu">sd</span>(hba1c, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has regrouped the output.
+ℹ Summaries were computed grouped by group and timepoint.
+ℹ Output is grouped by group.
+ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+ℹ Use `summarise(.by = c(group, timepoint))` for per-operation grouping
+  (`?dplyr::dplyr_by`) instead.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>hba1c_summary</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  group               timepoint     n mean_hba1c sd_hba1c
+  &lt;fct&gt;               &lt;fct&gt;     &lt;int&gt;      &lt;dbl&gt;    &lt;dbl&gt;
+1 Usual care          Baseline    120       8.44    0.870
+2 Usual care          3 months    118       8.05    0.884
+3 Usual care          6 months    121       7.76    1.01 
+4 Intensive lifestyle Baseline    112       8.27    0.848
+5 Intensive lifestyle 3 months    114       7.28    0.889
+6 Intensive lifestyle 6 months    110       6.64    0.949</code></pre>
+</div>
+</div>
+<p><strong>6.1</strong> At baseline, is mean HbA1c similar in the two groups?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>6.2</strong> At 6 months, which group has the lower mean HbA1c, and by roughly how many percentage points?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>6.3</strong> There are 124 patients in usual care and 116 in the lifestyle group, but none of the values in the <code>n</code> column matches those numbers. Why not? What does <code>sum(!is.na(hba1c))</code> count?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>6.4</strong> In a sentence or two, describe how HbA1c changes over time in each group.</p>
+<p><strong><em>Your answer:</em></strong></p>
+</section>
+<section id="activity-7-plot-the-trajectories" class="level2">
+<h2 class="anchored" data-anchor-id="activity-7-plot-the-trajectories">Activity 7: Plot the trajectories</h2>
+<p>Run the chunk below to plot the group means from Activity 6.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hba1c_summary,</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> timepoint, <span class="at">y =</span> mean_hba1c, <span class="at">colour =</span> group, <span class="at">group =</span> group)) <span class="sc">+</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Usual care"</span> <span class="ot">=</span> <span class="st">"#b48fe0"</span>,</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"Intensive lifestyle"</span> <span class="ot">=</span> <span class="st">"#4b2479"</span>)) <span class="sc">+</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Mean HbA1c over time by treatment group"</span>,</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Timepoint"</span>,</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Mean HbA1c (%)"</span>,</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">colour =</span> <span class="st">"Group"</span>) <span class="sc">+</span></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="workbook-1_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>7.1</strong> Describe how HbA1c changes over time within each group. Is the picture the same as the one you described from the numbers in Activity 6?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>7.2</strong> This plot shows only the group means. What information from the table in Activity 6 does it leave out, and why might a reader need it?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>7.3</strong> Copy the plot code into the chunk below and delete <code>group = group</code> from inside <code>aes()</code>. What happens, and what does that tell you <code>group</code> is for?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Your code here</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong><em>Your answer:</em></strong></p>
+</section>
+<section id="activity-8-your-turn-weight" class="level2">
+<h2 class="anchored" data-anchor-id="activity-8-your-turn-weight">Activity 8: Your turn: weight</h2>
+<p>Now do the same for weight, writing the code yourself. In the chunk below:</p>
+<ol type="1">
+<li>Create <code>wt_long</code>, a long-format version of the weight data, with columns <code>patient_id</code>, <code>group</code>, <code>timepoint</code> and <code>weight_kg</code>. Use Activity 5 as your model, with the weight columns from Activity 2.</li>
+<li>Make <code>timepoint</code> a factor with the labels “Baseline”, “3 months” and “6 months”, in that order.</li>
+<li>Draw boxplots of weight at each timepoint, for each group. You can copy this code to do it, once <code>wt_long</code> exists:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(wt_long, <span class="fu">aes</span>(<span class="at">x =</span> timepoint, <span class="at">y =</span> weight_kg, <span class="at">fill =</span> group)) <span class="sc">+</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Usual care"</span> <span class="ot">=</span> <span class="st">"#b48fe0"</span>,</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Intensive lifestyle"</span> <span class="ot">=</span> <span class="st">"#4b2479"</span>)) <span class="sc">+</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Weight over time by treatment group"</span>,</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Timepoint"</span>,</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Weight (kg)"</span>,</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Group"</span>) <span class="sc">+</span></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Your code here</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>8.1</strong> How does the median weight change over time in each group?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>8.2</strong> Does the weight pattern support the idea that the lifestyle programme is working? What would you need before you could say so with confidence?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>8.3</strong> For HbA1c you plotted the group means as lines; here you have boxplots. What can a boxplot show that a line through the means can’t?</p>
+<p><strong><em>Your answer:</em></strong></p>
+</section>
+<section id="activity-9-save-the-clean-data-and-render" class="level2">
+<h2 class="anchored" data-anchor-id="activity-9-save-the-clean-data-and-render">Activity 9: Save the clean data, and render</h2>
+<p>The last step in any cleaning job is to save a clean copy. Type the following into the <strong>Console</strong> (the objects you created by running this workbook’s chunks are available there too). If you didn’t complete 3.4, remove <code>smoker,</code> from the first line.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>dia_clean <span class="ot">&lt;-</span> dia <span class="sc">|&gt;</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(patient_id, group, sex, age_yrs, smoker, <span class="fu">starts_with</span>(<span class="st">"hba1c"</span>), <span class="fu">starts_with</span>(<span class="st">"weight"</span>))</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(dia_clean, <span class="st">"data/diabetes_clean.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>9.1</strong> Why is the clean copy saved under a new name rather than over the original file? And if you have the clean file, why keep the code that made it?</p>
+<p><strong><em>Your answer:</em></strong></p>
+<p><strong>9.2</strong> Save this workbook and click <strong>Render</strong>. Look through the rendered page: did every chunk give the output you expected? If not, what went wrong?</p>
+<p><strong><em>Your answer:</em></strong></p>
+</section>
+<section id="activity-10-optional-on-your-own" class="level2">
+<h2 class="anchored" data-anchor-id="activity-10-optional-on-your-own">Activity 10 (optional): On your own</h2>
+<p>If you finish early, or want more practice after the session, here is a second dataset with the same kinds of problem. <code>bootcamp_messy_clinic.csv</code> comes from a (simulated) six-month trial of a lifestyle programme in 260 adults with raised blood pressure, compared with a control group. It records systolic blood pressure (SBP, mmHg) and total cholesterol (mmol/L) at baseline, 3 months and 6 months. This time no code is provided.</p>
+<p>Write code, in as many chunks as you like, that:</p>
+<ol type="a">
+<li>imports the data and identifies its problems;</li>
+<li>tidies the column names, and renames the measurement columns to a consistent pattern;</li>
+<li>recodes sex, smoking status and group (as factors, with readable labels), and converts age to a number;</li>
+<li>finds any missing-value codes and replaces them with <code>NA</code> (check every measurement column, not just one);</li>
+<li>reshapes the SBP data to long format, then calculates and plots mean SBP over time in each group.</li>
+</ol>
+<p>Finish by writing two or three sentences describing what you found.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Your code here</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong><em>Your answer:</em></strong></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../weeks/02-data-into-shape/guide-1.html" class="pagination-link" aria-label="Session 1 · Guide">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Session 1 · Guide</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../weeks/02-data-into-shape/prep-2.html" class="pagination-link" aria-label="Session 2 · Before the session">
+        <span class="nav-page-text">Session 2 · Before the session</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>R for Biomedical Science · 2026/27</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org">Quarto</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
