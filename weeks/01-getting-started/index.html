@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-2b9549998784e16c38669169884c7178.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-a1f79b07cc658047d019327afef43822.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -240,7 +240,31 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <section id="before-you-start" class="level2">
 <h2 class="anchored" data-anchor-id="before-you-start">Before you start</h2>
-<p>Download the <strong><a href="week-01-student-pack.zip">week 1 student pack</a></strong> and unzip it. It contains both of this week’s workbooks and a <code>data</code> folder. You’ll move it all into a project folder during session 2.</p>
+<p>Download the <strong><a href="week-01-student-pack.zip">week 1 student pack</a></strong> and unzip it (instructions below). It contains both of this week’s workbooks and a <code>data</code> folder. Leave them in the extracted folder for now: in session 2 you’ll create a project folder for the module and move them into it.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Unzip the pack before you open anything
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The student pack is a <strong>zip file</strong>: one compressed file that holds several files and folders. You need to <em>extract</em> (unzip) it before RStudio can use what’s inside.</p>
+<p><strong>On Windows</strong></p>
+<ol type="1">
+<li>Find the zip file you downloaded. It’s usually in your <em>Downloads</em> folder.</li>
+<li>Right-click it and choose <strong>Extract All…</strong>.</li>
+<li>Click <strong>Extract</strong>. A new, ordinary folder appears next to the zip, with the same name but without “.zip” on the end.</li>
+<li>Open that new folder. You should see the workbook file(s) and a folder called <code>data</code>.</li>
+</ol>
+<p><strong>On a Mac</strong></p>
+<p>Double-click the zip file. It unzips automatically into a folder with the same name, next to the zip.</p>
+<p><strong>Then, in RStudio,</strong> choose <em>File › Open File…</em>, go into the extracted folder, and open the workbook.</p>
+<p><strong>Don’t open the workbook from inside the zip.</strong> Windows lets you look inside a zip file as if it were a folder, but a workbook opened that way can’t reliably save your answers and can’t find its data. If the folder you’re looking at has a zip (zipper) icon, or “.zip” in its name in the address bar, you’re still inside the zip: go back and use <em>Extract All…</em> first.</p>
+</div>
+</div>
 </section>
 <section id="session-1-r-and-rstudio-basics" class="level2">
 <h2 class="anchored" data-anchor-id="session-1-r-and-rstudio-basics">Session 1: R and RStudio basics</h2>
@@ -250,7 +274,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="during" class="level3 week-step">
 <h3 class="anchored" data-anchor-id="during">During</h3>
-<p>Open <code>week-01-session-1-workbook.qmd</code> in RStudio (<em>File › Open File…</em>) and work through the activities, with the <strong><a href="../../weeks/01-getting-started/guide-1.html">Guide to R 01</a></strong> open alongside. There is also a <a href="../../weeks/01-getting-started/workbook-1.html">web version of the workbook</a> if you want to read ahead.</p>
+<p>Open <code>week-01-session-1-workbook.qmd</code> from the extracted folder in RStudio (<em>File › Open File…</em>) and work through the activities, with the <strong><a href="../../weeks/01-getting-started/guide-1.html">Guide to R 01</a></strong> open alongside. There is also a <a href="../../weeks/01-getting-started/workbook-1.html">web version of the workbook</a> if you want to read ahead.</p>
 </section>
 </section>
 <section id="session-2-projects-importing-data-and-a-first-plot" class="level2">
